@@ -1,192 +1,199 @@
 # Dinkenesh Event Management System (DEMS)
 
-DEMS is a full-stack platform for managing the complete event lifecycle in Ethiopia, from discovery and ticket purchase to organizer operations, staff check-in, moderation, and payouts.
+## 1. Project Title and Description
 
-This repository contains:
-- A React + Vite frontend for attendees, organizers, staff, and admins.
-- An Express + Prisma backend API powered by PostgreSQL.
-- SQL and schema assets for database operations and migration support.
+DEMS is a full-stack event management platform for discovering events, purchasing tickets, running organizer operations, handling staff/security check-in, and processing moderation and appeals.
 
-## Core Capabilities
+This repository includes:
+- `frontend/`: React + Vite single-page app.
+- `backend/`: Express REST API with Prisma ORM.
+- `database/`: SQL snapshots/patches kept for reference.
 
-### Attendee
-- Register and authenticate.
-- Discover and filter events.
-- View detailed event pages.
-- Purchase tickets and verify payment.
-- Manage saved and purchased tickets.
+## 2. System Requirements
 
-### Organizer
-- Submit organizer application and access organizer flows.
-- Create and manage events.
-- Manage staff assignments.
-- Monitor analytics and export CSV reports.
-- Track platform fees and payout settings.
+Install the following on the instructor machine before setup:
 
-### Admin and Staff Operations
-- Review organizer approvals.
-- Manage categories, events, and users.
-- Handle check-in and scanning workflows.
-- Process moderation reports and appeals.
-- Monitor platform-level operational metrics.
+| Component | Version | Purpose |
+| --- | --- | --- |
+| Git | 2.34+ | Clone and manage repository |
+| Node.js | 18.18+ (20 LTS recommended) | Run backend and frontend |
+| npm | 9+ | Install JavaScript dependencies |
+| PostgreSQL | 14+ | Primary application database |
+| Redis | 7+ (optional) | Optional cache/queue experiments |
+| Browser | Latest Chrome/Firefox/Edge | Run frontend UI |
 
-## High-Level Architecture
+Framework/runtime versions currently used in code:
+- React 19.2.4
+- Vite 8.0.4
+- Express 5.2.1
+- Prisma 7.7.0
 
-- Frontend: Browser-based SPA served by Vite build output.
-- Backend: REST API with role-aware authorization and validation layers.
-- Data: PostgreSQL modeled via Prisma schema.
-- Payments: Chapa integration for checkout and verification flows.
-- Communication: Template-based transactional email service.
+## 3. Detailed Setup Instructions (Getting Started)
 
-## Tech Stack
+### Step 1: Clone the repository
 
-### Frontend
-- React 19
-- Vite 8
-- React Router 7
-- Tailwind CSS
-- Recharts
-- Leaflet and React Leaflet
-- jsQR
-
-### Backend
-- Node.js
-- Express 5
-- Prisma 7
-- PostgreSQL
-- JWT authentication
-- Nodemailer
-- Optional Redis queue hooks
-
-## Repository Structure
-
-```text
-.
-├─ backend/         # Express API, Prisma schema, controllers, routes, services
-├─ frontend/        # React application and static assets
-├─ database/        # SQL scripts, merged schema snapshots, and patches
-└─ vercel.json      # SPA route rewrite configuration
+```bash
+git clone https://github.com/Estifanos58/Dinkenesh-Event-Management-System.git
+cd Dinkenesh-Event-Management-System
 ```
 
-## Prerequisites
+### Step 2: Install dependencies
 
-- Node.js 18+
-- npm 9+
-- PostgreSQL 14+
-- Redis (optional, only if queue-based flows are enabled)
-
-## Quick Start
-
-### 1) Backend Setup
+Install backend packages:
 
 ```bash
 cd backend
 npm install
-cp .env.example .env
-npm run prisma:validate
-npm run prisma:generate
-npm run dev
 ```
 
-Backend default URL: http://localhost:5000  
-Health endpoint: http://localhost:5000/health
-
-### 2) Frontend Setup
+Install frontend packages:
 
 ```bash
-cd frontend
+cd ../frontend
 npm install
-npm run dev
 ```
 
-Frontend default URL: http://localhost:5173
+### Step 3: Configure environment variables
 
-## Environment Variables
+Backend:
 
-### Backend Required Variables
+```bash
+cd ../backend
+cp .env.example .env
+```
 
-At minimum, configure these in backend/.env:
-- PORT
-- NODE_ENV
-- DATABASE_URL
-- JWT_SECRET
-- JWT_EXPIRE
-- FRONTEND_URL
-- CORS_ORIGINS
-
-Also configure integrations as needed:
-- CHAPA_SECRET_KEY and CHAPA_PUBLIC_KEY
-- CHAPA_WEBHOOK_SECRET
-- EMAIL_HOST, EMAIL_PORT, EMAIL_USER, EMAIL_PASS, EMAIL_FROM
-- REDIS_HOST and REDIS_PORT (if using Redis-backed workflows)
-
-### Frontend Variables
-
-Set these in frontend/.env files as needed:
+Frontend: create `frontend/.env` and add:
 
 ```env
 VITE_API_URL=http://localhost:5000/api
-VITE_CLOUDINARY_CLOUD_NAME=your_cloud_name
-VITE_CLOUDINARY_UPLOAD_PRESET=your_unsigned_upload_preset
-VITE_GOOGLE_MAPS_API_KEY=your_google_maps_key
+VITE_CLOUDINARY_CLOUD_NAME=
+VITE_CLOUDINARY_UPLOAD_PRESET=
+VITE_GOOGLE_MAPS_API_KEY=
 ```
 
-## Database and Seed Workflow
+### Step 4: Initialize the database
 
-From backend:
+1. Create a PostgreSQL database named `dems_db` (or update `DATABASE_URL` to your DB name).
+2. From `backend/`, apply Prisma schema to your PostgreSQL instance:
 
 ```bash
 npm run prisma:validate
+npx prisma db push
 npm run prisma:generate
+```
+
+3. Optional demo data seed:
+
+```bash
 npm run seed:demo
 ```
 
-Useful Prisma commands:
+### Step 5: Launch the application
+
+Start backend (Terminal 1):
 
 ```bash
-npm run prisma:format
-npm run prisma:pull
-npm run prisma:studio
+cd backend
+npm run dev
 ```
 
-## Script Reference
+Start frontend (Terminal 2):
 
-### Backend Scripts
-- npm run dev
-- npm run start
-- npm run test
-- npm run seed:demo
-- npm run prisma:validate
-- npm run prisma:generate
-- npm run prisma:format
-- npm run prisma:pull
-- npm run prisma:studio
-- npm run prisma:studio:open
+```bash
+cd frontend
+npm run dev
+```
 
-### Frontend Scripts
-- npm run dev
-- npm run build
-- npm run seo:sitemap
-- npm run lint
-- npm run preview
+App URLs:
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:5000
+- Health check: http://localhost:5000/health
 
-## Deployment Notes
+## 4. Current Feature Status (Mid-Project Submission)
 
-- The repository includes Vercel rewrite rules for SPA routing.
-- Ensure the frontend API base URL points to a deployed backend.
-- Ensure backend CORS settings include the deployed frontend domain.
-- Keep secrets in environment variables only, never in source control.
+### Fully implemented
 
-## Security and Operational Notes
+- [x] Authentication (register/login) with JWT and role checks.
+- [x] Event discovery, filtering, featured listing, and event detail pages.
+- [x] Organizer workflows: create/manage events and staff assignments.
+- [x] Ticket purchase flow with payment initialization/verification.
+- [x] QR-based ticket scan/check-in with duplicate-scan prevention.
+- [x] Rating and comment system (reviews + organizer reply support).
+- [x] Moderation reports, bans, and appeals (organizer/admin decisions).
+- [x] Admin workflows: organizer approvals and admin dashboard stats.
+- [x] CSV export endpoints for organizer and admin analytics.
+- [x] Notification retrieval/read flows and template-based email service.
 
-- JWT and role checks are enforced in backend middleware.
-- Rate limiting and request validation middleware are available.
-- Moderation and reporting flows are implemented in dedicated controllers and routes.
+### Planned / in-progress
 
-## Contributors
+- [ ] Automated test coverage (Jest is configured, but test files are not yet present).
+- [ ] Redis-backed runtime cache/queue flow (`backend/config/redis.js` is scaffolded/empty).
+- [ ] Scheduled moderation maintenance jobs (not wired as active runtime jobs).
+- [ ] CI/CD pipeline and containerized runtime profile documentation.
 
-The repository history reflects broad collaboration across frontend, backend, moderation, and operations features.
+## 5. Dependency Management
 
-## License
+### JavaScript/Node dependency manifests
+
+Use and submit these manifests:
+- `backend/package.json`
+- `frontend/package.json`
+
+Do not include `node_modules` in submissions.
+
+### Environment variable template
+
+Backend example file:
+- `backend/.env.example`
+
+If sharing template files publicly, keep secret values blank.
+
+## 6. Code Quality and Standards
+
+This project is organized around clean-code principles:
+
+- Modularity: backend is split into routes, controllers, middleware, services, and utils; frontend is split into pages, components, contexts, api, and utils.
+- Naming conventions: descriptive names are used for modules, functions, and variables (for example: `getOrganizerStats`, `exportAdminDashboardCsv`, `scanTicket`).
+- Validation and error handling: request validation middleware plus centralized error handling are in place in backend.
+- Internal documentation: concise comments are used for non-obvious logic, and contributors should keep function-level purpose/inputs/outputs documented.
+
+Documentation standard for new contributions:
+- Every new class (if introduced) should include a short purpose comment.
+- Every exported function should include a short description of inputs, output, and important logic decisions.
+
+## 7. Repository Structure
+
+```text
+.
+├─ backend/        # Express API, Prisma schema, controllers, routes, services
+├─ frontend/       # React application
+├─ database/       # SQL assets and schema references
+├─ Instruction.md
+├─ Presentation.md
+└─ README.md
+```
+
+## 8. Script Reference
+
+Backend (`backend/package.json`):
+- `npm run dev`
+- `npm run start`
+- `npm run test`
+- `npm run seed:demo`
+- `npm run prisma:validate`
+- `npm run prisma:generate`
+- `npm run prisma:format`
+- `npm run prisma:pull`
+- `npm run prisma:studio`
+- `npm run prisma:studio:open`
+
+Frontend (`frontend/package.json`):
+- `npm run dev`
+- `npm run build`
+- `npm run seo:sitemap`
+- `npm run lint`
+- `npm run preview`
+
+## 9. License
 
 MIT
